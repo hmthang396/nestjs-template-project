@@ -1,6 +1,5 @@
 import { AuthCredentialsRequestDto } from '@applications/dtos/authentication/auth-credentials-request.dto';
 import { CreateResetPasswordLinkRequestDto } from '@applications/dtos/authentication/create-reset-password-link-request.dto';
-import { GenerateAccessTokenFromRefreshTokenRequestDto } from '@applications/dtos/authentication/generate-access-token-from-refresh-token-request.dto';
 import { RegisterUserRequestDto } from '@applications/dtos/authentication/register-user-request.dto';
 import { ResetPasswordRequestDto } from '@applications/dtos/authentication/reset-password-request.dto';
 import { TokenDto } from '@applications/dtos/authentication/token.dto';
@@ -11,7 +10,7 @@ import { UserAccount } from '@domains/entities';
 import { UseCase } from '@domains/usecase/usecase.interface';
 import { UsecasesProxyProvide } from '@infrastructures/enums';
 import { UseCaseProxy } from '@infrastructures/usecase-proxy/usecases-proxy';
-import { Body, Controller, HttpCode, Inject, Post, Request, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, Inject, Post, Request, UseGuards, ValidationPipe } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
@@ -26,6 +25,8 @@ import { LoginResponseDto } from '@applications/dtos/authentication/login-respon
 import { TOKEN_NAME } from '@infrastructures/config/swagger/swagger.config';
 import { JwtPayload } from '@domains/adapters/jwt.interface';
 import JwtRefreshGuard from '@shared/decorators/jwt-refresh-guard';
+import { RegisterVerifyOtpDto } from '@applications/dtos/authentication/regiter-verify.dto copy';
+import { ResendRegisterOtpDto } from '@applications/dtos/authentication/resend-register-otp.dto';
 
 @ApiTags('Authentication')
 @Controller({
@@ -54,6 +55,11 @@ export class AuthenticationController {
     private readonly generateAccessTokenFromRefreshTokenUseCase: UseCaseProxy<
       UseCase<{ user: UserAccount; payload: JwtPayload }, TokenDto>
     >,
+
+    @Inject(UsecasesProxyProvide.SendOtpUseCase)
+    private readonly sendOtpUseCase: UseCaseProxy<UseCase<string, SuccessResponseDto>>,
+    @Inject(UsecasesProxyProvide.VerifyOtpUsecase)
+    private readonly verifyOtpUsecase: UseCaseProxy<UseCase<RegisterVerifyOtpDto, SuccessResponseDto>>,
   ) {}
 
   @ApiGlobalResponse(UserAccountResponseDto)
@@ -150,5 +156,23 @@ export class AuthenticationController {
     return await this.generateAccessTokenFromRefreshTokenUseCase
       .getInstance()
       .execute({ user: request.user, payload: request.jwtPayload });
+  }
+
+  @ApiGlobalResponse(SuccessResponseDto)
+  @ApiOperation({ description: 'Resend Register Otp' })
+  @Post('/register/resend-otp')
+  @HttpCode(200)
+  @SkipAuth()
+  public async resendVerifyOtp(@Body(ValidationPipe) dto: ResendRegisterOtpDto): Promise<SuccessResponseDto> {
+    return this.sendOtpUseCase.getInstance().execute(dto.email);
+  }
+
+  @ApiGlobalResponse(SuccessResponseDto)
+  @ApiOperation({ description: 'Verify User Register' })
+  @Post('/register/verify')
+  @HttpCode(200)
+  @SkipAuth()
+  public async verify(@Body(ValidationPipe) dto: RegisterVerifyOtpDto): Promise<SuccessResponseDto> {
+    return this.verifyOtpUsecase.getInstance().execute(dto);
   }
 }

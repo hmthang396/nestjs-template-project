@@ -52,10 +52,9 @@ export class EmailSenderModule {
       module: EmailSenderModule,
       providers: [
         {
-          inject: [MailerService, EnvironmentConfigService],
+          inject: [MailerService],
           provide: EmailSenderService,
-          useFactory: (mailerService: MailerService, mailerConfig: EnvironmentConfigService) =>
-            new EmailSenderService(mailerService, mailerConfig),
+          useFactory: (mailerService: MailerService) => new EmailSenderService(mailerService),
         },
       ],
       exports: [EmailSenderService],

@@ -3,10 +3,30 @@ import { JWTConfig } from 'src/domains/config/jwt.interface';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerConfig } from '@domains/config/mailer.interface';
+import { QueueConfig } from '@domains/config/queue.interface';
 
 @Injectable()
-export class EnvironmentConfigService implements DatabaseConfig, JWTConfig, MailerConfig {
+export class EnvironmentConfigService implements DatabaseConfig, JWTConfig, MailerConfig, QueueConfig {
   constructor(private configService: ConfigService) {}
+  // Queue
+  getQueueExchangeTimeout(): number {
+    return +this.configService.get<number>('QUEUE_TIMEOUT');
+  }
+  getQueueUsername(): string {
+    return this.configService.get<string>('QUEUE_USERNAME');
+  }
+  getQueuePassword(): string {
+    return this.configService.get<string>('QUEUE_PASSWORD');
+  }
+  getQueueHost(): string {
+    return this.configService.get<string>('QUEUE_HOST');
+  }
+  getQueuePort(): number {
+    return +this.configService.get<string>('QUEUE_PORT');
+  }
+  getQueueUri(): string {
+    return `amqp://${this.getQueueUsername()}:${this.getQueuePassword()}@${this.getQueueHost()}:${this.getQueuePort()}`;
+  }
   // Mailer
   getMailerFrom(): string {
     return this.configService.get<string>('MAIL_FROM');

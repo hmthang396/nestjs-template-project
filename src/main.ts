@@ -27,7 +27,7 @@ async function bootstrap() {
   app
     .use(helmet())
     .use(compression())
-		.use(cookieParser())
+    .use(cookieParser())
     .use(bodyParser.json({ limit: BODY_SIZE_LIMIT }))
     .use(bodyParser.urlencoded({ limit: BODY_SIZE_LIMIT, extended: true }))
     .useGlobalFilters(new HttpExceptionFilter(AppModule.logger))

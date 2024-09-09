@@ -11,6 +11,9 @@ import { PassportModule } from '@nestjs/passport';
 import { LoggerService } from '@infrastructures/logging/logger.service';
 import { LoggerModule } from '@infrastructures/logging/logger.module';
 import { UsecasesProxyModule } from '@infrastructures/usecase-proxy/usecases-proxy.module';
+import { SubscriberModule } from '@presentations/mapper/subscribers/subcriber.module';
+import { SchedulerModule } from '@presentations/scheduler/scheduler.module';
+import { ConsumerModule } from '@presentations/consumer/consumer.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { UsecasesProxyModule } from '@infrastructures/usecase-proxy/usecases-pro
     JwtTokenModule,
     LoggerModule,
     UsecasesProxyModule.register(),
+    SubscriberModule,
+    SchedulerModule,
+    ConsumerModule,
   ],
   controllers: [],
   providers: [],

@@ -5,3 +5,5 @@ export * from './reset-password.provider';
 export * from './verify-recovery-token.provider';
 export * from './logout.provider';
 export * from './generate-access-token-from-refresh-token.provider';
+export * from './send-otp.provider';
+export * from './verify-otp.provider';

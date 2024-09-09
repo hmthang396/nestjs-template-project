@@ -1,4 +1,4 @@
-import { PaginationRequest, PaginationResponseDto } from "@shared/pagination";
+import { PaginationRequest, PaginationResponseDto } from '@shared/pagination';
 
 export class Pagination {
   /**

@@ -6,7 +6,6 @@ import { IUnitOfWork } from '@domains/unit-of-work/unit-of-work.service';
 import { UseCase } from '@domains/usecase/usecase.interface';
 import { NotFoundException } from '@nestjs/common';
 import { SuccessResponseDto } from '@shared/dtos';
-import { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
 
 export class ForgotPasswordUseCases implements UseCase<CreateResetPasswordLinkRequestDto, SuccessResponseDto> {
   constructor(
