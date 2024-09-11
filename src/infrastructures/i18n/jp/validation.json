@@ -1,0 +1,16 @@
+{
+	"login": {
+		"username_empty": "ユーザー名は必須です",
+		"email_empty": "メールアドレスは必須です",
+		"password_empty": "パスワードが必要",
+		"credential_wrong": "ユーザー名かパスワードが無効",
+		"user_inactive": "ユーザー {username} はアクティブではありません"
+	},
+	"NOT_EMPTY": "{property} は空であってはなりません",
+	"INVALID_EMAIL": "メールアドレスが無効です",
+	"INVALID_BOOLEAN": "{property} はブール値ではありません",
+	"MIN": "{property} の値: \"{value}\" は少なくとも {constraints.0} 以上でなければなりません、さもないと {message}",
+	"MAX": "{property} の値: \"{value}\" は {constraints.0} 未満でなければなりません、さもないと {message}",
+	"MAX_LENGTH": "{property} は {constraints.0} 文字以下でなければなりません",
+	"whitelistValidation": "プロパティ「{property}」は存在してはいけません。"
+}

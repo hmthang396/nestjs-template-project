@@ -43,11 +43,11 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
     }
 
     if (userAccount.status == UserAccountStatus.Inactive) {
-      throw new DisabledUserException(ErrorType.InactiveUser);
+      throw new DisabledUserException(ErrorType.InactiveUser, `${userAccount.firstName} ${userAccount.lastName}`);
     }
 
     if (userAccount.status == UserAccountStatus.Blocked) {
-      throw new DisabledUserException(ErrorType.BlockedUser);
+      throw new DisabledUserException(ErrorType.BlockedUser, `${userAccount.firstName} ${userAccount.lastName}`);
     }
 
     if (!(userAccount.tokens && userAccount.tokens.length > 0)) {

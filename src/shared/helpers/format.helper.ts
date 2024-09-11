@@ -1,6 +1,8 @@
 import * as moment from 'moment';
 import { FORMAT_DATE, FORMAT_DATETIME, FORMAT_TIME } from '@shared/common/constants';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ValidationError } from '@nestjs/common';
+import { I18nContext, I18nService } from 'nestjs-i18n';
+import { ValidationTypes } from 'class-validator';
 
 export class FormatHelper {
   static formatDate(datetime?: Date): string {
@@ -55,5 +57,43 @@ export class FormatHelper {
       default:
         throw new BadRequestException(`Cannot convert string "${value}" to boolean.`);
     }
+  }
+
+  static exceptionFactory(errors: ValidationError[], i18nService: I18nService) {
+    const formatError = (error: ValidationError) => {
+      if (error.children?.length) {
+        return {
+          field: error.property,
+          errors: error.children.map(formatError),
+        };
+      }
+
+      if (Object.keys(error.constraints).includes(ValidationTypes.WHITELIST)) {
+        const currentLanguage = I18nContext.current()?.lang || 'en';
+
+        error.constraints[ValidationTypes.WHITELIST] = i18nService.t(`validation.${ValidationTypes.WHITELIST}`, {
+          lang: currentLanguage,
+          args: {
+            property: error.property,
+          },
+        });
+      }
+
+      return {
+        field: error.property,
+        errors: Object.values(error.constraints),
+      };
+    };
+
+    return errors.map((error) => formatError(error));
+  }
+
+  static formatException(statusCode: number, path: string, error: any) {
+    return {
+      statusCode,
+      timestamp: new Date().getTime(),
+      path,
+      error,
+    };
   }
 }

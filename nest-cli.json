@@ -6,7 +6,8 @@
     "deleteOutDir": true,
 		"watchAssets": true,
 		"assets": [
-			"/infrastructures/services/mailer/templates/*"
+			"/infrastructures/services/mailer/templates/*",
+			"/infrastructures/i18n/**/*"
 		]
   }
 }

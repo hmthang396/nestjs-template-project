@@ -14,6 +14,8 @@ import { UsecasesProxyModule } from '@infrastructures/usecase-proxy/usecases-pro
 import { SubscriberModule } from '@presentations/mapper/subscribers/subcriber.module';
 import { SchedulerModule } from '@presentations/scheduler/scheduler.module';
 import { ConsumerModule } from '@presentations/consumer/consumer.module';
+import { I18nConfigModule } from '@infrastructures/config/i18n/i18n.module';
+import { I18nService } from 'nestjs-i18n';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { ConsumerModule } from '@presentations/consumer/consumer.module';
     SubscriberModule,
     SchedulerModule,
     ConsumerModule,
+    I18nConfigModule,
   ],
   controllers: [],
   providers: [],
@@ -40,15 +43,18 @@ export class AppModule {
   static apiVersion: string;
   static apiPrefix: string;
   static logger: LoggerService;
+  static i18n: I18nService;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: LoggerService,
+    private readonly i18n: I18nService,
   ) {
     AppModule.logger = logger;
     AppModule.port = +this.configService.get('API_PORT');
     AppModule.mode = this.configService.get('APP_MODE');
     AppModule.apiVersion = this.configService.get('API_VERSION');
     AppModule.apiPrefix = this.configService.get('API_PREFIX');
+    AppModule.i18n = i18n;
   }
 }

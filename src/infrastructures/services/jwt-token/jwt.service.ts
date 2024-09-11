@@ -28,24 +28,20 @@ export class JwtTokenService implements IJwtService {
     userAccount: UserAccount,
     hasVerify2FA?: boolean,
   ): Promise<{ user: UserAccount; token: ITokenDto; refreshTokenCookie: string }> {
-    try {
-      const token: TokenDto = await this.generateTokens(userAccount, hasVerify2FA);
+    const token: TokenDto = await this.generateTokens(userAccount, hasVerify2FA);
 
-      await this.updateOrCreateTokens(userAccount, token);
+    await this.updateOrCreateTokens(userAccount, token);
 
-      const refreshTokenCookie = this.getCookieWithJwtRefreshToken(token.refreshToken);
+    const refreshTokenCookie = this.getCookieWithJwtRefreshToken(token.refreshToken);
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { refreshToken, ...accessTokenReponseDto } = token;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { refreshToken, ...accessTokenReponseDto } = token;
 
-      return {
-        user: userAccount,
-        token: accessTokenReponseDto,
-        refreshTokenCookie,
-      };
-    } catch (error) {
-      console.log(error);
-    }
+    return {
+      user: userAccount,
+      token: accessTokenReponseDto,
+      refreshTokenCookie,
+    };
   }
 
   async checkToken(token: string, type: TokenType): Promise<JwtPayload | Partial<JwtPayload>> {

@@ -1,0 +1,17 @@
+{
+	"login": {
+		"username_empty": "UserName is required",
+		"email_empty": "Email is required",
+		"password_empty": "Password is required",
+		"credential_wrong": "Invalid username or password",
+		"user_inactive": "User {username} is not Active"
+	},
+	"Internal Server Error": "Internal Server Error",
+	"NOT_EMPTY": "{property} cannot be empty",
+	"INVALID_EMAIL": "Email is invalid",
+	"INVALID_BOOLEAN": "{property} is not a boolean",
+	"MIN": "{property} with value: \"{value}\" needs to be at least {constraints.0}, ow and {message}",
+	"MAX": "{property} with value: \"{value}\" needs to be less than {constraints.0}, ow and {message}",
+	"MAX_LENGTH": "{property} must be shorter than or equal to {constraints.0} characters",
+	"whitelistValidation": "Property {property} should not exist"
+}

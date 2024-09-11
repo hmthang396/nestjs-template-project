@@ -1,15 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { APP_ROUTE_PREFIX, APP_VERSION, BODY_SIZE_LIMIT } from '@shared/common/constants';
-import { BadRequestException, Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ArgumentsHost, Logger, VersioningType } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import helmet from 'helmet';
 import * as compression from 'compression';
-import { ValidationError } from 'class-validator';
 import { SwaggerConfig } from 'src/infrastructures/config/swagger/swagger.config';
 import { HttpExceptionFilter } from '@shared/filters/exceptions/http-exception.filter';
 import { HttpResponseInterceptor } from '@shared/interceptors/response';
 import * as cookieParser from 'cookie-parser';
+import { I18nValidationException, I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { FormatHelper } from '@shared/helpers';
+import { error } from 'console';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,29 +32,22 @@ async function bootstrap() {
     .use(cookieParser())
     .use(bodyParser.json({ limit: BODY_SIZE_LIMIT }))
     .use(bodyParser.urlencoded({ limit: BODY_SIZE_LIMIT, extended: true }))
-    .useGlobalFilters(new HttpExceptionFilter(AppModule.logger))
-    // .useGlobalInterceptors(new LoggingInterceptor(AppModule.logger))
     .useGlobalInterceptors(new HttpResponseInterceptor(AppModule.mode))
     .useGlobalPipes(
-      new ValidationPipe({
-        exceptionFactory: (errors) => {
-          const formatError = (error: ValidationError) => {
-            if (error.children?.length) {
-              return {
-                field: error.property,
-                errors: error.children.map(formatError),
-              };
-            }
-            return {
-              field: error.property,
-              errors: Object.values(error.constraints ?? {}),
-            };
-          };
-          return new BadRequestException(errors.map((error) => formatError(error)));
-        },
+      new I18nValidationPipe({
         stopAtFirstError: false,
         whitelist: true,
         forbidNonWhitelisted: true,
+      }),
+    )
+    .useGlobalFilters(
+      new HttpExceptionFilter(AppModule.logger, AppModule.i18n),
+      new I18nValidationExceptionFilter({
+        errorFormatter: (errors) => {
+          return FormatHelper.exceptionFactory(errors, AppModule.i18n);
+        },
+        responseBodyFormatter: (host: ArgumentsHost, exc: I18nValidationException, formattedErrors: object) =>
+          FormatHelper.formatException(exc.getStatus(), host.switchToHttp().getRequest<Request>().url, formattedErrors),
       }),
     );
 
